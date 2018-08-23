@@ -1,11 +1,15 @@
 # engine
---
-    import "spaceuptech.com/space-engine-go/engine"
 
+## Installation
+```bash
+go get spaceuptech.com/space-engine-go/engine
+```
 
 ## Usage
 
 ```go
+import "spaceuptech.com/space-engine-go/engine"
+
 // Function to be registered
 func myFunc(params engine.M, auth engine.M, cb engine.CallBack) {
     log.Println("Params", params, "Auth", auth)
