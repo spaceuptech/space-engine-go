@@ -32,4 +32,8 @@ myEngine.RegisterFunc("my-func", myFunc)
 // Start engine
 myEngine.Start()
 
+// Call function of some other engine
+res, err := myEngine.Call("some-engine", "some-func", engine.M{"msg": "space-engine-go is awesome!"}, 1000)
+log.println("Res", res, "Err", err)
+
 ```

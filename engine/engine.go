@@ -3,6 +3,7 @@ package engine
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	nats "github.com/nats-io/go-nats"
 )
@@ -119,4 +120,30 @@ func (engine *Engine) Start() {
 			engine.callFunc(fn, params, nil, msg.Reply)
 		}
 	}
+}
+
+// Call -- calls a function of any engine
+func (engine *Engine) Call(engineName, functionName string, params map[string]interface{}, timeOut int) (*M, error) {
+	subj := "faas:" + engineName + ":" + functionName
+
+	// Convert params into json
+	dataBytes, err := json.Marshal(&params)
+	if err != nil {
+		return nil, err
+	}
+
+	// Make a nats request
+	msg, err := engine.natsClient.Request(subj, dataBytes, time.Duration(timeOut)*time.Millisecond)
+	if err != nil {
+		return nil, err
+	}
+
+	// Parse msg
+	res := M{}
+	err = json.Unmarshal(msg.Data, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	return &res, nil
 }
