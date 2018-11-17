@@ -11,6 +11,8 @@ import (
 const (
 	// TypeResponse is used as callback type to give response
 	TypeResponse = "response"
+	// TypeNoResponse is used as callback type to not give any response
+	TypeNoResponse = "no-response"
 )
 
 // M is the type for json objects
@@ -48,13 +50,16 @@ func Init(name string, url string) (*Engine, error) {
 func (engine *Engine) callFunc(fn Func, params M, auth M, replyTo string) {
 	fn(params, auth, func(cbType string, res M) {
 		switch cbType {
-		case "response":
+		case TypeResponse:
 			b, err := json.Marshal(res)
 			if err != nil {
 				engine.natsClient.Publish(replyTo, []byte("{\"ack\":false}"))
 				return
 			}
 			engine.natsClient.Publish(replyTo, b)
+			break
+		default:
+			engine.natsClient.Publish(replyTo, []byte("{\"ack\":true}"))
 		}
 	})
 }
