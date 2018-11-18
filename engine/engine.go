@@ -58,8 +58,7 @@ func (engine *Engine) callFunc(fn Func, params M, auth M, replyTo string) {
 			}
 			engine.natsClient.Publish(replyTo, b)
 			break
-		default:
-			engine.natsClient.Publish(replyTo, []byte("{\"ack\":true}"))
+		case TypeNoResponse:
 		}
 	})
 }
